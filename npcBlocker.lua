@@ -52,15 +52,15 @@ local function npcBlocker__ChannelMsgFilter(self, event, msg, author, ...)
   
         -- Celestial court noodle vendors
         elseif author == "Brother Noodle" then return true
-        elseif author == "Great Chief Woo" then return true
+        elseif author == "Great Chef Woo" then return true
         elseif author == "Sapmaster Vu" then return true
-        elseif author == "Healthminder Diago" then return true
-        elseif author == "Master Mian Tiao" then return true
+        elseif author == "Hearthminder Diago" then return true
+        elseif author == "Master Miantiao" then return true
         elseif author == "Noodle-Maker Monmon" then return true
         elseif author == "Brewmaster Tzu" then return true
         elseif author == "Big Dan Stormstout" then return true
         elseif author == "Galu Wellspring" then return true
-        elseif author == "Grimhorn Redbeard" then return true
+        elseif author == "Grimthorn Redbeard" then return true
         elseif author == "Crafter Kwon" then return true
         elseif author == "Smiling Jade" then return true
         elseif author == "Graceful Swan" then return true
