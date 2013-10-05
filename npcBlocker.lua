@@ -1,82 +1,123 @@
--- create a frame to listen to the chat events
-local frame, events = CreateFrame("FRAME"), {};
+-- create a frame to listen to game events
+local mainFrame, mainFrameEvents = CreateFrame("FRAME"), {};
+
+--------------------------------------------------------------------------------
+-- Initialize the npcSay table
+local function tblNpcSay_Init()
+
+    -- Create the table to hold the npcs we want to block says for
+    tblNpcSay = {};
+
+    -- Populate the tblNpcSay table
+
+    -- Block says from npcs  
+    table.insert(tblNpcSay, "Topper McNabb");
+    table.insert(tblNpcSay, "Morris Lawry");
+  
+    -- Celestial court noodle vendors
+    table.insert(tblNpcSay, "Brother Noodle");
+    table.insert(tblNpcSay, "Great Chef Woo");
+    table.insert(tblNpcSay, "Sapmaster Vu");
+    table.insert(tblNpcSay, "Hearthminder Digao");
+    table.insert(tblNpcSay, "Master Miantiao");
+    table.insert(tblNpcSay, "Noodle-Maker Monmon");
+    table.insert(tblNpcSay, "Brewmaster Tzu");
+    table.insert(tblNpcSay, "Big Dan Stormstout");
+    table.insert(tblNpcSay, "Galu Wellspring");
+    table.insert(tblNpcSay, "Grimthorn Redbeard");
+    table.insert(tblNpcSay, "Crafter Kwon");
+    table.insert(tblNpcSay, "Smiling Jade");
+    table.insert(tblNpcSay, "Graceful Swan");
+    table.insert(tblNpcSay, "Drix Blackwrench");
+
+end
+
+function npcBlocker__dumpDB()
+
+   for i,npc in ipairs(tblNpcSay) do
+        print(npc);
+   end
+end
+
+function npcBlocker__reloadDB()
+
+    tblNpcSay = nil;
+    tblNpcSay_Init()
+end
+
 
 -- this is the chat filter that hides the chat messages we don't want.
-local function npcBlocker__ChannelMsgFilter(self, event, msg, author, ...)
-    -- Block says from npcs  
-    if author == "Topper McNabb" then return true
-        elseif author == "Morris Lawry" then return true
-  
-        -- Celestial court noodle vendors
-        elseif author == "Brother Noodle" then return true
-        elseif author == "Great Chef Woo" then return true
-        elseif author == "Sapmaster Vu" then return true
-        elseif author == "Hearthminder Diago" then return true
-        elseif author == "Master Miantiao" then return true
-        elseif author == "Noodle-Maker Monmon" then return true
-        elseif author == "Brewmaster Tzu" then return true
-        elseif author == "Big Dan Stormstout" then return true
-        elseif author == "Galu Wellspring" then return true
-        elseif author == "Grimthorn Redbeard" then return true
-        elseif author == "Crafter Kwon" then return true
-        elseif author == "Smiling Jade" then return true
-        elseif author == "Graceful Swan" then return true
-        elseif author == "Drix Blackwrench" then return true
-
-        -- Block all yells from players
-        elseif event == "CHAT_MSG_YELL" then return true
+function npcBlocker__ChannelMsgFilterNPCSay(self, event, msg, author, ...)
+    -- print the lines
+    for i,npc in ipairs(tblNpcSay) do
+        if author == npc then 
+            return true
+        end
+    end
+    -- Block all yells from players
+    if event == "CHAT_MSG_YELL" then return true
     end
 end
 
-frame:SetScript("OnEvent", function(self, event, ...)
- events[event](self, ...); -- call one of the functions above
+--------------------------------------------------------------------------------
+-- ADDON_LOADED event handler
+function mainFrameEvents:ADDON_LOADED(arg1)
+    if arg1 == "npcBlocker" then
+        if npcBlockerStatus == nil then
+            npcBlockerStatus = true;
+        end
+        if tblNpcSay == nil then
+            tblNpcSay_Init();
+        end
+        -- Our saved variables are ready at this point. If there are none, both variables will set to nil.
+        print("NPC Blocker Loaded.");
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Register defigned events
+mainFrame:SetScript("OnEvent", function(self, event, ...)
+ mainFrameEvents[event](self, ...); -- call one of the functions above
 end);
-for k, v in pairs(events) do
- frame:RegisterEvent(k); -- Register all events for which handlers have been defined
-end
-
--- has the addon ever been run? if not, set the addon status to on
-if npcBlockerStatus == nil then
-    npcBlockerStatus = true;
-end
-
--- has the addon been loaded?
-function events:ADDON_LOADED()
- if arg1 == "npcBlockerStatus" then
-  -- Our saved variables are ready at this point. If there are none, both variables will set to nil.
-  print("NPC Blocker Loaded.");
- end
+for k, v in pairs(mainFrameEvents) do
+ mainFrame:RegisterEvent(k); -- Register all events for which handlers have been defined
 end
 
 -- add chat filter for npc says
-ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_SAY", npcBlocker__ChannelMsgFilter);
+ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_SAY", npcBlocker__ChannelMsgFilterNPCSay);
 -- add chat filter for player yells
-ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", npcBlocker__ChannelMsgFilter);
+ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", npcBlocker__ChannelMsgFilterNPCSay);
 
--- create the slash command
-SLASH_NPCBLOCKER1 = '/npcblock';
-
--- function to turn npcBlocker on and off
-local function ToggleStatus(opcode, editbox)
+--------------------------------------------------------------------------------
+-- Slash command handler function
+function npcBlocker__slashCmdHandler(opcode, editbox)
     if npcBlockerStatus == true then
         npcBlockerStatus = false;
         -- add chat filter for npc says
-        ChatFrame_RemoveMessageEventFilter("CHAT_MSG_MONSTER_SAY", npcBlocker__ChannelMsgFilter);
+        ChatFrame_RemoveMessageEventFilter("CHAT_MSG_MONSTER_SAY", npcBlocker__ChannelMsgFilterNPCSay);
         -- add chat filter for player yells
-        ChatFrame_RemoveMessageEventFilter("CHAT_MSG_YELL", npcBlocker__ChannelMsgFilter);
+        ChatFrame_RemoveMessageEventFilter("CHAT_MSG_YELL", npcBlocker__ChannelMsgFilterNPCSay);
         print("NPC Blocker is now off.");
     else
        	npcBlockerStatus = true;
         -- add chat filter for npc says
-        ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_SAY", npcBlocker__ChannelMsgFilter);
+        ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_SAY", npcBlocker__ChannelMsgFilterNPCSay);
         -- add chat filter for player yells
-        ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", npcBlocker__ChannelMsgFilter);
+        ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", npcBlocker__ChannelMsgFilterNPCSay);
 	print("NPC Blocker is now on.");
     end
 end
 
--- assign slash command to the handler function
-SlashCmdList["NPCBLOCKER"] = ToggleStatus; -- Also a valid assignment strategy
+--------------------------------------------------------------------------------
+-- Create the slash command
+SLASH_NPCBLOCKER1 = '/npcblock';
+SLASH_NPCBLOCKER_DUMP1 = '/npcblock_dump';
+SLASH_NPCBLOCKER_RELOAD1 = '/npcblock_reload';
+
+-- Assign slash command to the handler function
+SlashCmdList["NPCBLOCKER"] = npcBlocker__slashCmdHandler;
+SlashCmdList["NPCBLOCKER_DUMP"] = npcBlocker__dumpDB;
+SlashCmdList["NPCBLOCKER_RELOAD"] = npcBlocker__reloadDB;
 
 
 

@@ -1,3 +1,8 @@
+== v1.1.2
+
+* Moved npcs into a table for easier editing in the upcoming options pane
+* Typo correction on Digao
+
 == v1.1.1
 
 Fixed noodle vendor name typos.

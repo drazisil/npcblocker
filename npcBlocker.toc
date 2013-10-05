@@ -6,7 +6,7 @@
 ## X-License:  CC-NC-SA http://creativecommons.org/licenses/by-nc-sa/3.0/us/
 
 ## SavedVariablesPerCharacter:
-## SavedVariables: npcBlockerDB, npcBlockerStatus
+## SavedVariables: tblNpcSay, npcBlockerStatus
 
 npcBlocker.lua
 npcBlockerOptions.lua
