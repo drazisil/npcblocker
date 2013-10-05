@@ -2,10 +2,11 @@
 ## Title: npcBlocker
 ## Notes: This addon block messages from some annoying NPCs. Mainly Topper McNabb. Also blocks all yells.
 ## Author: Drazisil
-## Version: 1.1.0
+## Version: 1.2.0
 ## X-License:  CC-NC-SA http://creativecommons.org/licenses/by-nc-sa/3.0/us/
 
 ## SavedVariablesPerCharacter:
 ## SavedVariables: npcBlockerDB, npcBlockerStatus
 
 npcBlocker.lua
+npcBlockerOptions.lua

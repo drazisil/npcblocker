@@ -1,50 +1,7 @@
-SLASH_NPCBLOCKER1 = '/npcblock';
+-- create a frame to listen to the chat events
+local frame, events = CreateFrame("FRAME"), {};
 
-local function ToggleStatus(opcode, editbox)
-	if npcBlockerStatus == true then
-	    npcBlockerStatus = false;
-		print("NPC Blocker is now off.");
-	else
-        	npcBlockerStatus = true;
-		print("NPC Blocker is now on.");
-	end
-end
-
---------------------------------
-
-SLASH_HELLOWORLD1, SLASH_HELLOWORLD2 = '/hiw', '/hellow';
-local function handler(msg, editBox)
-    if msg == 'bye' then
-        print('Goodbye, World!')
-    else
-        print("Hello, World!")
-    end
-end
-SlashCmdList["HELLOWORLD"] = handler; -- Also a valid assignment strategy
-
---------------------------
-
-SlashCmdList["NPCBLOCKER"] = ToggleStatus; -- Also a valid assignment strategy
-
-
--- OLD CODE HERE
-
--- frame and register events
-local frame, events = CreateFrame("FRAME"), {}; -- Need a frame to respond to events
-
--- Topper McNabb
-
--- If not set, set the addon status to on
-if npcBlockerStatus == nil then
-    npcBlockerStatus = true;
-end
--- Functions Section
-function events:ADDON_LOADED()
- if arg1 == "npcBlockerStatus" then
-  -- Our saved variables are ready at this point. If there are none, both variables will set to nil.
-  print("NPC Blocker Loaded.");
- end
-end
+-- this is the chat filter that hides the chat messages we don't want.
 local function npcBlocker__ChannelMsgFilter(self, event, msg, author, ...)
     -- Block says from npcs  
     if author == "Topper McNabb" then return true
@@ -78,5 +35,48 @@ for k, v in pairs(events) do
  frame:RegisterEvent(k); -- Register all events for which handlers have been defined
 end
 
+-- has the addon ever been run? if not, set the addon status to on
+if npcBlockerStatus == nil then
+    npcBlockerStatus = true;
+end
+
+-- has the addon been loaded?
+function events:ADDON_LOADED()
+ if arg1 == "npcBlockerStatus" then
+  -- Our saved variables are ready at this point. If there are none, both variables will set to nil.
+  print("NPC Blocker Loaded.");
+ end
+end
+
+-- add chat filter for npc says
 ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_SAY", npcBlocker__ChannelMsgFilter);
+-- add chat filter for player yells
 ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", npcBlocker__ChannelMsgFilter);
+
+-- create the slash command
+SLASH_NPCBLOCKER1 = '/npcblock';
+
+-- function to turn npcBlocker on and off
+local function ToggleStatus(opcode, editbox)
+    if npcBlockerStatus == true then
+        npcBlockerStatus = false;
+        -- add chat filter for npc says
+        ChatFrame_RemoveMessageEventFilter("CHAT_MSG_MONSTER_SAY", npcBlocker__ChannelMsgFilter);
+        -- add chat filter for player yells
+        ChatFrame_RemoveMessageEventFilter("CHAT_MSG_YELL", npcBlocker__ChannelMsgFilter);
+        print("NPC Blocker is now off.");
+    else
+       	npcBlockerStatus = true;
+        -- add chat filter for npc says
+        ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_SAY", npcBlocker__ChannelMsgFilter);
+        -- add chat filter for player yells
+        ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", npcBlocker__ChannelMsgFilter);
+	print("NPC Blocker is now on.");
+    end
+end
+
+-- assign slash command to the handler function
+SlashCmdList["NPCBLOCKER"] = ToggleStatus; -- Also a valid assignment strategy
+
+
+
