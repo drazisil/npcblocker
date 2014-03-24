@@ -16,14 +16,18 @@
 
 
 -- create a interface options panel
-local addonName, addon = ...
-if not addon.healthCheck then return end
-local L = addon.L
-
-local wow_ver = select(4, GetBuildInfo())
-local wow_500 = wow_ver >= 50000
-local UIPanelButtonTemplate = wow_500 and "UIPanelButtonTemplate" or "UIPanelButtonTemplate2"
-
-local optionsFrame = CreateFrame("Frame", nil, InterfaceOptionsFramePanelContainer)
-optionsFrame.name = addonName
-optionsFrame:Hide()
+npcBlocker = {};
+ npcBlocker.panel = CreateFrame( "Frame", "npcBlockerPanel", UIParent );
+ -- Register in the Interface Addon Options GUI
+ -- Set the name for the Category for the Options Panel
+ npcBlocker.panel.name = "npcBlocker";
+ -- Add the panel to the Interface Options
+ InterfaceOptions_AddCategory(npcBlocker.panel);
+ 
+ -- Make a child panel
+ npcBlocker.childpanel = CreateFrame( "Frame", "npcBlockerChild", npcBlocker.panel);
+ npcBlocker.childpanel.name = "npcBlocker";
+ -- Specify childness of this panel (this puts it under the little red [+], instead of giving it a normal AddOn category)
+ npcBlocker.childpanel.parent = npcBlocker.panel.name;
+ -- Add the child to the Interface Options
+ InterfaceOptions_AddCategory(npcBlocker.childpanel);

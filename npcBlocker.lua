@@ -15,58 +15,60 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+    -- Create the table to hold the npcs we want to block says for
+local npcBlock_Defaults = {
+  ["NPCs"] = {},
+};
+
 -- create a frame to listen to game events
 local mainFrame, mainFrameEvents = CreateFrame("FRAME"), {};
 
 --------------------------------------------------------------------------------
 -- Initialize the npcSay table
-local function tblNpcSay_Init()
+local function npcBlock_Init()
 
-    -- Create the table to hold the npcs we want to block says for
-    tblNpcSay = {};
-
-    -- Populate the tblNpcSay table
+    -- Populate the npcBlock_Defaults["NPCs"] table
 
     -- Block says from npcs  
-    table.insert(tblNpcSay, "Topper McNabb");
-    table.insert(tblNpcSay, "Morris Lawry");
+    table.insert(npcBlock_Defaults["NPCs"], "Topper McNabb");
+    table.insert(npcBlock_Defaults["NPCs"], "Morris Lawry");
   
     -- Celestial court noodle vendors
-    table.insert(tblNpcSay, "Brother Noodle");
-    table.insert(tblNpcSay, "Great Chef Woo");
-    table.insert(tblNpcSay, "Sapmaster Vu");
-    table.insert(tblNpcSay, "Hearthminder Digao");
-    table.insert(tblNpcSay, "Master Miantiao");
-    table.insert(tblNpcSay, "Noodle-Maker Monmon");
-    table.insert(tblNpcSay, "Brewmaster Tzu");
-    table.insert(tblNpcSay, "Big Dan Stormstout");
-    table.insert(tblNpcSay, "Galu Wellspring");
-    table.insert(tblNpcSay, "Grimthorn Redbeard");
-    table.insert(tblNpcSay, "Crafter Kwon");
-    table.insert(tblNpcSay, "Smiling Jade");
-    table.insert(tblNpcSay, "Graceful Swan");
-    table.insert(tblNpcSay, "Drix Blackwrench");
+    table.insert(npcBlock_Defaults["NPCs"], "Brother Noodle");
+    table.insert(npcBlock_Defaults["NPCs"], "Great Chef Woo");
+    table.insert(npcBlock_Defaults["NPCs"], "Sapmaster Vu");
+    table.insert(npcBlock_Defaults["NPCs"], "Hearthminder Digao");
+    table.insert(npcBlock_Defaults["NPCs"], "Master Miantiao");
+    table.insert(npcBlock_Defaults["NPCs"], "Noodle-Maker Monmon");
+    table.insert(npcBlock_Defaults["NPCs"], "Brewmaster Tzu");
+    table.insert(npcBlock_Defaults["NPCs"], "Big Dan Stormstout");
+    table.insert(npcBlock_Defaults["NPCs"], "Galu Wellspring");
+    table.insert(npcBlock_Defaults["NPCs"], "Grimthorn Redbeard");
+    table.insert(npcBlock_Defaults["NPCs"], "Crafter Kwon");
+    table.insert(npcBlock_Defaults["NPCs"], "Smiling Jade");
+    table.insert(npcBlock_Defaults["NPCs"], "Graceful Swan");
+    table.insert(npcBlock_Defaults["NPCs"], "Drix Blackwrench");
 
 end
 
 function npcBlocker__dumpDB()
 
-   for i,npc in ipairs(tblNpcSay) do
+   for i,npc in ipairs(npcBlock_Defaults["NPCs"]) do
         print(npc);
    end
 end
 
 function npcBlocker__reloadDB()
 
-    tblNpcSay = nil;
-    tblNpcSay_Init()
+    npcBlock_Defaults["NPCs"] = {};
+    npcBlock_Init()
 end
 
 
 -- this is the chat filter that hides the chat messages we don't want.
 function npcBlocker__ChannelMsgFilterNPCSay(self, event, msg, author, ...)
     -- print the lines
-    for i,npc in ipairs(tblNpcSay) do
+    for i,npc in ipairs(npcBlock_Defaults["NPCs"]) do
         if author == npc then 
             return true
         end
@@ -79,12 +81,18 @@ end
 --------------------------------------------------------------------------------
 -- ADDON_LOADED event handler
 function mainFrameEvents:ADDON_LOADED(arg1)
+
+  if (not npcBlock_Options) then
+    npcBlock_Options = npcBlock_Defaults["Options"];
+    -- DEFAULT_CHAT_FRAME:AddMessage("npcBlocker Options database not found. Generating...");
+  end
+
     if arg1 == "npcBlocker" then
         if npcBlockerStatus == nil then
             npcBlockerStatus = true;
         end
-        if tblNpcSay == nil then
-            tblNpcSay_Init();
+        if npcBlock_Defaults["NPCs"] == nil then
+            npcBlock_Init();
         end
         -- Our saved variables are ready at this point. If there are none, both variables will set to nil.
         print("NPC Blocker Loaded.");
