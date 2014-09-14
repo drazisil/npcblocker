@@ -40,7 +40,6 @@ local function npcBlock_Init()
     table.insert(npcBlock_Defaults["NPCs"], "Hearthminder Digao");
     table.insert(npcBlock_Defaults["NPCs"], "Master Miantiao");
     table.insert(npcBlock_Defaults["NPCs"], "Noodle-Maker Monmon");
-    table.insert(npcBlock_Defaults["NPCs"], "Brewmaster Tzu");
     table.insert(npcBlock_Defaults["NPCs"], "Big Dan Stormstout");
     table.insert(npcBlock_Defaults["NPCs"], "Galu Wellspring");
     table.insert(npcBlock_Defaults["NPCs"], "Grimthorn Redbeard");
@@ -49,6 +48,9 @@ local function npcBlock_Init()
     table.insert(npcBlock_Defaults["NPCs"], "Graceful Swan");
     table.insert(npcBlock_Defaults["NPCs"], "Drix Blackwrench");
     table.insert(npcBlock_Defaults["NPCs"], "Smiling Jade");
+    -- Celestial Court Brewmasters
+    table.insert(npcBlock_Defaults["NPCs"], "Brewmaster Tzu");
+
 
 end
 
@@ -63,6 +65,7 @@ function npcBlocker__reloadDB()
 
     npcBlock_Defaults["NPCs"] = {};
     npcBlock_Init()
+    DEFAULT_CHAT_FRAME:AddMessage("npcBlocker Options database reloaded.");
 end
 
 
@@ -83,18 +86,21 @@ end
 -- ADDON_LOADED event handler
 function mainFrameEvents:ADDON_LOADED(arg1)
 
-  if (not npcBlock_Options) then
-    npcBlock_Options = npcBlock_Defaults["Options"];
-    -- DEFAULT_CHAT_FRAME:AddMessage("npcBlocker Options database not found. Generating...");
-  end
+    if arg1 == "npcblocker" then
+        if (not npcBlock_Options) then
+            npcBlock_Options = npcBlock_Defaults["Options"];
+            DEFAULT_CHAT_FRAME:AddMessage("npcBlocker Options database not found. Generating...");
+        end
 
-    if arg1 == "npcBlocker" then
+
         if npcBlockerStatus == nil then
             npcBlockerStatus = true;
         end
-        if npcBlock_Defaults["NPCs"] == nil then
+        if next(npcBlock_Defaults["NPCs"]) == nil then
+            DEFAULT_CHAT_FRAME:AddMessage("npcBlocker NPC database needs to be rebuilt...");
             npcBlock_Init();
         end
+
         -- Our saved variables are ready at this point. If there are none, both variables will set to nil.
         print("NPC Blocker Loaded.");
     end
