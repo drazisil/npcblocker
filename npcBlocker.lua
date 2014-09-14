@@ -48,6 +48,7 @@ local function npcBlock_Init()
     table.insert(npcBlock_Defaults["NPCs"], "Smiling Jade");
     table.insert(npcBlock_Defaults["NPCs"], "Graceful Swan");
     table.insert(npcBlock_Defaults["NPCs"], "Drix Blackwrench");
+    table.insert(npcBlock_Defaults["NPCs"], "Smiling Jade");
 
 end
 
