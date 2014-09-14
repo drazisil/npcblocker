@@ -8,6 +8,8 @@
 ## SavedVariablesPerCharacter:
 ## SavedVariables: tblNpcSay, npcBlockerStatus
 
+localization.core.lua
+npcBlockerCommands.lua
 npcBlocker.lua
 npcBlockerOptions.lua
 npcBlockerOptions.xml
