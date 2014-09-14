@@ -10,3 +10,4 @@
 
 npcBlocker.lua
 npcBlockerOptions.lua
+npcBlockerOptions.xml
